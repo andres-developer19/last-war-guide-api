@@ -13,35 +13,22 @@ const API_KEY = process.env.API_KEY;
 
 const API_BASE = "https://api.lwatlas.com/v1";
 
+
+if (!API_KEY) {
+
+    console.error("");
+
+    console.error("❌ ERROR: No existe la variable API_KEY");
+
+    console.error("Configúrala en .env o en Render.");
+
+    process.exit(1);
+
+}
+
 app.use(cors());
 
 app.use(express.json());
-
-app.listen(PORT, () => {
-
-    console.clear();
-
-    console.log("");
-
-    console.log("==========================================");
-
-    console.log("🚀 Last War Guide Backend");
-
-    console.log("==========================================");
-
-    console.log("");
-
-    console.log(`Puerto       : ${PORT}`);
-
-    console.log(`LWAtlas API  : ${API_BASE}`);
-
-    console.log(`Health Check : http://localhost:${PORT}/health`);
-
-    console.log("");
-
-    console.log("==========================================");
-
-});
 
 function getHeaders() {
 
@@ -74,9 +61,21 @@ async function llamarAPI(url) {
 
     });
 
+    if (!respuesta.ok) {
+
+    console.warn(
+
+        `${respuesta.status} ${url}`
+
+    );
+
+}
+
     const texto = await respuesta.text();
 
     try {
+
+        
 
         return {
 
@@ -454,13 +453,13 @@ function analizarNdjson(texto) {
 
     const ahora = Date.now();
 
-    const vigentes = filas.filter(f =>
+const vigentes = filas.filter(f =>
 
-        f.act_end_time >
+    f.act_end_time &&
 
-        ahora
+    f.act_end_time > ahora
 
-    );
+);
 
     console.log("");
 
@@ -737,5 +736,31 @@ app.use((err, req, res, next) => {
         message: err.message
 
     });
+
+});
+
+app.listen(PORT, () => {
+
+    console.clear();
+
+    console.log("");
+
+    console.log("==========================================");
+
+    console.log("🚀 Last War Guide Backend");
+
+    console.log("==========================================");
+
+    console.log("");
+
+    console.log(`Puerto       : ${PORT}`);
+
+    console.log(`LWAtlas API  : ${API_BASE}`);
+
+    console.log(`Health Check : http://localhost:${PORT}/health`);
+
+    console.log("");
+
+    console.log("==========================================");
 
 });
